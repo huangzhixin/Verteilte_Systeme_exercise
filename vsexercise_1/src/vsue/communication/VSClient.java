@@ -12,6 +12,8 @@ public class VSClient {
       Serializable object1 =  (Serializable)new Integer(0);
       connection.sendObject(object1);
       Serializable object2 = connection.receiveObject();
+      Integer sb =  (Integer) object2;
+      System.out.println(sb);
       if(object1.equals(object2)){
     	  System.out.println("Original-Object entspricht!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       }

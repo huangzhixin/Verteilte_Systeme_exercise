@@ -10,8 +10,9 @@ import java.rmi.server.UnicastRemoteObject;
 public class VSBoardRMIServer {
 	    public static void main(String[] args) throws RemoteException, AlreadyBoundException, MalformedURLException {
 	    	VSBoard boardImpl = new VSBoardImpl();
-	    	
-	    	VSBoard board = (VSBoard) UnicastRemoteObject.exportObject(boardImpl,0);
+	    	System.setProperty("java.rmi.server.hostname", "134.169.202.225"); //*************
+	    	@SuppressWarnings("deprecation")
+			VSBoard board = (VSBoard) UnicastRemoteObject.exportObject(boardImpl,7779);
 	    	Registry registry = LocateRegistry.createRegistry(7777);
 	    	registry.bind("board", board);
 	    	System.out.println(" server success!!!!!");

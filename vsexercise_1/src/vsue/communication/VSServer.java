@@ -25,7 +25,7 @@ public class VSServer {
           System.out.println("Error."+e);
       }
 	socket.close(); 
-	server.close(); 
+	//server.close(); 
 	}catch(Exception e){
 	    System.out.println("Error:"+e);
     }
