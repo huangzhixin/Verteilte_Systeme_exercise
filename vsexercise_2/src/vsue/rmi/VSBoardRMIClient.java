@@ -1,12 +1,17 @@
 package vsue.rmi;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+
+import vsue.rmi.VSBoardListener;
+import vsue.rpc.VSRemoteObjectManager;
 
 public class VSBoardRMIClient implements VSBoardListener, Serializable {
 	
@@ -52,10 +57,12 @@ public class VSBoardRMIClient implements VSBoardListener, Serializable {
 		
 	}
 	
-	public void listen(){
+	public void listen() throws UnknownHostException, IOException{
 		try {
 			VSBoardListener vsbl = new VSBoardRMIClient();
-			VSBoardListener lister = (VSBoardListener) UnicastRemoteObject.exportObject(vsbl,7778);
+			VSBoardListener lister = (VSBoardListener) VSRemoteObjectManager.getInstance().exportObject(vsbl);
+			
+			//VSBoardListener lister = (VSBoardListener) UnicastRemoteObject.exportObject(vsbl,78);
 			vsBoard.listen(lister);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -90,15 +97,15 @@ public class VSBoardRMIClient implements VSBoardListener, Serializable {
 	}
 	
 	
-	public static void main(String[] args) throws MalformedURLException{
-		System.setProperty("java.rmi.server.hostname", "192.168.0.105"); //*************
+	public static void main(String[] args) throws UnknownHostException, IOException{
+		System.setProperty("java.rmi.server.hostname", "192.168.0.112"); //*************
 		System.out.println("client success!!!!!");
 		
 		VSBoardRMIClient VSClient = new VSBoardRMIClient();
 		
 		
 		VSClient.registry();
-		System.out.println("registry success!!!!!");
+		//System.out.println("registry success!!!!!");
 		
 		
 		
@@ -111,14 +118,14 @@ public class VSBoardRMIClient implements VSBoardListener, Serializable {
 		VSClient.post(msg);
 		
 		
-		//VSClient.listen();
+		VSClient.listen();
 		
-		msg[0] = "47";
+		/*msg[0] = "47";
 		msg[1] = "Das ist det Title";
 		msg[2] = "Das ist die Botschaft";
 		VSClient.post(msg);
 		
-		VSClient.listen();
+		//VSClient.listen();
 		
 		msg[0] = "1000";
 		msg[1] = "Das ist det Title";
@@ -129,7 +136,7 @@ public class VSBoardRMIClient implements VSBoardListener, Serializable {
 		msg[1] = "Das ist det Title";
 		msg[2] = "Das ist die Botschaft";
 		VSClient.post(msg);
-		VSClient.get(1);
+		VSClient.get(7);*/
 		
 		
 	}

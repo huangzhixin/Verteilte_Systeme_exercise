@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 import vsue.communication.VSObjectConnection;
 import vsue.communication.VSTestMessage;
 import vsue.rmi.VSBoard;

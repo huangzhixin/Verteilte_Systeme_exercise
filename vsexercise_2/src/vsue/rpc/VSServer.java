@@ -13,44 +13,84 @@ import vsue.communication.VSTestMessage;
 import vsue.rmi.VSBoard;
 import vsue.rmi.VSBoardImpl;
 
-public class VSServer {
-
-	//public static vsue.rmi.VSBoard bbs;
-    
-	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
+public class VSServer implements Runnable{
+	private static VSServer instance;
+	static int port;
+	public VSServer (int port){
+		this.port = port;
+	}
+	
+	
+	static synchronized VSServer getInstance() throws IOException {
+	    if (VSServer.instance == null)
+	      VSServer.instance = new VSServer(port);
+	    return VSServer.instance;
+	  }
+	
+	public class VSRequestWorker extends Thread{
+		private Socket clientSocket;
+		
+		public VSRequestWorker(Socket clientSocket) {
+			this.clientSocket = clientSocket;
+			
+			start();
+		}
+		
+		public void run(){
+			VSObjectConnection  connection =  new  VSObjectConnection(this.clientSocket);
+			while(true)
+			{
+				VSTestMessage message;
+				try {
+					message = (VSTestMessage) connection.receiveObject();
+					int objectID = message.getInteger();
+					String genericMethodName = message.getString();
+					Object[] argss = message.getObjects();
+					/*if(argss == null)
+					{
+						System.out.println("leer");
+					}
+					else
+					{
+						System.out.println("nicht leer");
+					}*/
+					VSRemoteObjectManager manager = VSRemoteObjectManager.getInstance();
+					Serializable retVal = null;
+					retVal = (Serializable) manager.invokeMethod(objectID, genericMethodName,argss);
+					connection.sendObject(retVal);
+				} catch (ClassNotFoundException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public void run() {
+    	System.out.println("server run");
 		ServerSocket serverSocket = null;
-		VSBoard bbs = new VSBoardImpl();
 		try {
-			serverSocket = new ServerSocket(7777);
-		} catch(IOException e) {
+			serverSocket = new ServerSocket(this.port);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.exit(-1);
 		}
 		Socket clientSocket = null;
-		while(true) {
+		while(true)
+		{
 			try {
 				clientSocket = serverSocket.accept();
-				//与客户端连接后，接收到客户的函数请求
-			    VSObjectConnection  connection =  new  VSObjectConnection(clientSocket);
-			    VSTestMessage message = (VSTestMessage) connection.receiveObject();
-				int objectID = message.getInteger();
-				String genericMethodName = message.getString();
-				Object[] argss = message.getObjects();
-				VSRemoteObjectManager manager = VSRemoteObjectManager.getInstance();
-				 Serializable retVal = null;
-				if(genericMethodName.equals("creat object")){
-				      retVal = (Serializable) manager.exportObject(bbs);
-				}
-				else{
-				     retVal = (Serializable) manager.invokeMethod(objectID, genericMethodName,argss);
-				}
-				connection.sendObject(retVal);
-			}
-			catch(IOException e) {
-				System.err.println("Accept failed on Port 7777");
-			}
+				
+				new VSRequestWorker(clientSocket);
+				 
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
 			
 		}
-
+		
 	}
-}
+} 
+
+	

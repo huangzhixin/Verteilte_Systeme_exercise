@@ -19,7 +19,7 @@ public class VSObjectConnection extends VSConnection{
 		ObjectOutputStream objectOutputStream = new ObjectOutputStream (BAoutputStream);
 		objectOutputStream.writeObject(object);
 		byte[] byteOfObject = BAoutputStream.toByteArray();
-		System.out.println("die Größe der serialisierten Daten ist    " + byteOfObject.length);
+		//System.out.println("die Größe der serialisierten Daten ist    " + byteOfObject.length);
 		sendChunk(byteOfObject);
 	}
 	public Serializable  receiveObject() throws IOException, ClassNotFoundException{

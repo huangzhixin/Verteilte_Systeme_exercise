@@ -14,7 +14,7 @@ public class VSBoardImpl  implements VSBoard,Serializable {
 	}
 
 	private List<VSBoardMessage> listOfMessage = new ArrayList<VSBoardMessage>();
-     private Set<VSBoardListener> setOfListener = new HashSet<VSBoardListener>();
+     private List<VSBoardListener> setOfListener = new ArrayList<VSBoardListener>();
      //private List<VSBoardListener> setOfListener= Collections.synchronizedList(new LinkedList<VSBoardListener>());
      
 	 public void post(VSBoardMessage message) throws RemoteException {
@@ -29,6 +29,7 @@ public class VSBoardImpl  implements VSBoard,Serializable {
   public VSBoardMessage[] get(int n) throws IllegalArgumentException,RemoteException {
 		// TODO Auto-generated method stub
 	    int size = listOfMessage.size();
+	    System.out.println(size);
 		if (n<0){
 			System.out.println("Input ist nicht gütig, n musst größer als 0!!!!!!!!!!!!!!!!!");
 		}	
@@ -46,8 +47,15 @@ public class VSBoardImpl  implements VSBoard,Serializable {
 
 	public void listen(VSBoardListener listener) throws RemoteException {
 		// TODO Auto-generated method stub
-		//System.out.println("+++++");
+		System.out.println("listen!!!");
+		System.out.println(setOfListener.size() );
+		if(listener != null)
+		{
+			System.out.println("listener not leer");
+			//System.out.println(listener);
+		}
 		 setOfListener.add(listener);
+		System.out.println(setOfListener.size() );
 		// System.out.println(setOfListener.size() );
 		 System.out.println("new user!");
 	}
